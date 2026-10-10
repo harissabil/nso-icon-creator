@@ -42,6 +42,7 @@ export const SEARCH_NAMES = {
   earthbound: 'EarthBound',
   'endless-ocean-luminous': 'Endless Ocean Luminous',
   'fire-emblem-engage': 'Fire Emblem Engage',
+  'fire-emblem-fortunes-weave': "Fire Emblem: Fortune's Weave",
   'fzero-99': 'F-ZERO 99',
   'game-boy-advance-nintendo-switch-online': 'Game Boy Advance Nintendo Switch Online',
   'game-boy-nintendo-switch-online': 'Game Boy Nintendo Switch Online',

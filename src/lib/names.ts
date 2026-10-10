@@ -28,6 +28,7 @@ const NAME_OVERRIDES: Record<string, string> = {
   earthbound: 'EarthBound',
   'endless-ocean-luminous': 'Endless Ocean Luminous',
   'fire-emblem-engage': 'Fire Emblem Engage',
+  'fire-emblem-fortunes-weave': "Fire Emblem: Fortune's Weave",
   'fire-emblem-three-houses': 'Fire Emblem: Three Houses',
   'fzero-99': 'F-ZERO 99',
   'game-boy-advance-nintendo-switch-online': 'Game Boy Advance – Nintendo Switch Online',
