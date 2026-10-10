@@ -1,22 +1,3 @@
-export const FEATURED_ORDER: string[] = [
-  'default',
-  'pokemon-pokopia',
-  'super-mario-bros-wonder',
-  'super-mario-galaxy-series',
-  'kirby-air-riders',
-  'xenoblade-chronicles-3',
-  'metroid-prime-4-beyond',
-  'super-mario-party-jamboree',
-  'super-mario-rpg',
-  'super-mario-odyssey',
-  'donkey-kong-bananza',
-  'nintendo-switch-2',
-  'nintendo-switch-sports',
-  'mario-kart-world',
-  'splatoon-raiders',
-  'pokemon-legends-za',
-];
-
 const NAME_OVERRIDES: Record<string, string> = {
   'animal-crossing-new-horizons': 'Animal Crossing: New Horizons',
   default: 'Nintendo Switch',
@@ -107,13 +88,14 @@ export function displayName(slug: string): string {
   return TRADEMARK_SLUGS.has(slug) ? `${titled}™` : titled;
 }
 
-export function sortCategories<T extends { slug: string }>(categories: T[]): T[] {
-  const rank = new Map(FEATURED_ORDER.map((slug, i) => [slug, i]));
+export function sortCategories<T extends { slug: string; name: string; addedAt?: string | null }>(
+  categories: T[],
+): T[] {
   return [...categories].sort((a, b) => {
-    const ar = rank.get(a.slug) ?? Number.POSITIVE_INFINITY;
-    const br = rank.get(b.slug) ?? Number.POSITIVE_INFINITY;
-    if (ar !== br) return ar - br;
-    return a.slug.localeCompare(b.slug);
+    const ad = a.addedAt ?? '';
+    const bd = b.addedAt ?? '';
+    if (ad !== bd) return bd.localeCompare(ad);
+    return a.name.localeCompare(b.name);
   });
 }
 

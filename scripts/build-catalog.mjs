@@ -6,7 +6,8 @@ import { resolveBanner } from './fix-banners.mjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outPath = join(root, 'public', 'catalog.json');
 const SKIP_SLUGS = new Set(['outdated-parts']);
-const TREE_URL = 'https://api.github.com/repos/henry-debruin/nso-icons/git/trees/main?recursive=1';
+const REPO_API = 'https://api.github.com/repos/henry-debruin/nso-icons';
+const TREE_URL = `${REPO_API}/git/trees/main?recursive=1`;
 
 function loadEnv() {
   const envPath = join(root, '.env');
@@ -30,16 +31,47 @@ function titleCase(slug) {
     .join(' ');
 }
 
-async function fetchTree() {
+function githubHeaders() {
   const headers = {
     'User-Agent': 'nso-icon-creator',
     Accept: 'application/vnd.github+json',
   };
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
   if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await fetch(TREE_URL, { headers });
+  return headers;
+}
+
+async function fetchTree() {
+  const res = await fetch(TREE_URL, { headers: githubHeaders() });
   if (!res.ok) throw new Error(`GitHub tree ${res.status}`);
   return res.json();
+}
+
+async function fetchAddedAt(slug) {
+  try {
+    const url = `${REPO_API}/commits?path=${encodeURIComponent(slug)}&per_page=1`;
+    const first = await fetch(url, { headers: githubHeaders() });
+    if (!first.ok) return null;
+    const last = first.headers.get('link')?.match(/[?&]page=(\d+)>; rel="last"/)?.[1];
+    const res = last ? await fetch(`${url}&page=${last}`, { headers: githubHeaders() }) : first;
+    if (!res.ok) return null;
+    const [commit] = await res.json();
+    return commit?.commit?.author?.date ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function previousAddedAt() {
+  if (!existsSync(outPath)) return new Map();
+  try {
+    const prev = JSON.parse(readFileSync(outPath, 'utf8'));
+    return new Map(
+      (prev.categories ?? []).filter((c) => c.addedAt).map((c) => [c.slug, c.addedAt]),
+    );
+  } catch {
+    return new Map();
+  }
 }
 
 async function mapPool(items, limit, fn) {
@@ -84,6 +116,7 @@ for (const item of tree.tree ?? []) {
 
 const slugs = [...buckets.keys()].sort();
 const ci = Boolean(process.env.VERCEL || process.env.CI);
+const knownAddedAt = previousAddedAt();
 console.log(`Found ${slugs.length} categories. Resolving banners…`);
 console.log(`RAWG ${process.env.RAWG_API_KEY ? 'on' : 'off (missing RAWG_API_KEY)'}`);
 
@@ -93,15 +126,24 @@ const categories = await mapPool(slugs, ci ? 5 : 1, async (slug, i) => {
     parts[kind].sort();
   }
   const banner = await bannerFor(slug);
-  console.log(`[${i + 1}/${slugs.length}] ${slug} ${banner.source}`);
+  const addedAt = knownAddedAt.get(slug) ?? (await fetchAddedAt(slug));
+  console.log(`[${i + 1}/${slugs.length}] ${slug} ${banner.source} ${addedAt ?? 'no-date'}`);
   if (!ci) await sleep(80);
   return {
     slug,
     name: titleCase(slug),
     bannerUrl: banner.url,
+    addedAt,
     ...parts,
   };
 });
+
+const undated = categories.filter((c) => !c.addedAt).map((c) => c.slug);
+if (undated.length) {
+  console.warn(
+    `No addedAt for ${undated.length} categories (GitHub rate limit? set GITHUB_TOKEN): ${undated.join(', ')}`,
+  );
+}
 
 mkdirSync(join(root, 'public'), { recursive: true });
 const catalog = {

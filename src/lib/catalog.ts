@@ -6,6 +6,7 @@ export type Category = {
   slug: string;
   name: string;
   bannerUrl: string | null;
+  addedAt?: string | null;
   frames: string[];
   characters: string[];
   backgrounds: string[];
