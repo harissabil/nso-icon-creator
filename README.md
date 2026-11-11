@@ -43,11 +43,13 @@ The `npm run catalog` command reads the icon repo listing and looks up cover art
 game, then writes `public/catalog.json`. You only need to run it again when new
 icon packs are added upstream.
 
-Optional: create a `.env` with a [RAWG](https://rawg.io/apidocs) key so games
-without an eShop listing still get artwork.
+Optional: copy `.env.example` to `.env` and fill in a [RAWG](https://rawg.io/apidocs)
+key so games without an eShop listing still get artwork. A `GITHUB_TOKEN` raises
+the GitHub API rate limit, which the catalog build otherwise runs into.
 
 ```
 RAWG_API_KEY=your_key_here
+GITHUB_TOKEN=your_token_here
 ```
 
 ## How it works
@@ -71,8 +73,14 @@ Pushing to `main` builds and publishes to GitHub Pages via
 variables > Actions so cover art resolves there too.
 
 The site is served from `/nso-icon-creator/` on GitHub Pages, so asset paths are
-built with that prefix. If you host it at the root of a domain instead, build
-with `BASE_PATH=/`.
+built with that prefix. The build also writes the full site URL into the canonical link, the social
+preview tags and `sitemap.xml`. To host it somewhere else, set both of these,
+either in `.env` or as workflow variables:
+
+```
+BASE_PATH=/                     # path the app is served from
+SITE_URL=https://example.com/   # absolute public URL
+```
 
 ## Credits
 

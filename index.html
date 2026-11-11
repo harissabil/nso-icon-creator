@@ -4,10 +4,50 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>NSO Icon Creator</title>
+    <title>NSO Icon Creator: Make Nintendo Switch Online Profile Icons</title>
+    <meta
+      name="description"
+      content="Free Nintendo Switch Online (NSO) icon creator. Pick a game, combine a background, character and frame, and download your custom Switch profile icon as a PNG."
+    />
+    <link rel="canonical" href="%SITE_URL%" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="NSO Icon Creator" />
+    <meta property="og:title" content="NSO Icon Creator: Make Nintendo Switch Online Profile Icons" />
+    <meta
+      property="og:description"
+      content="Combine a background, character and frame from Nintendo Switch Online icon sets and download your custom profile icon."
+    />
+    <meta property="og:url" content="%SITE_URL%" />
+    <meta name="twitter:card" content="summary" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "NSO Icon Creator",
+        "alternateName": ["Nintendo Switch Icon Creator", "Nintendo Switch Online Icon Maker"],
+        "url": "%SITE_URL%",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "Any",
+        "description": "Create custom Nintendo Switch Online profile icons by combining a background, character and frame, then download them as PNG.",
+        "offers": { "@type": "Offer", "price": "0" }
+      }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Static fallback content for crawlers and no-JS visitors; React replaces it on mount. -->
+    <div id="root">
+      <main style="font-family: sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem">
+        <h1>NSO Icon Creator</h1>
+        <p>
+          Make your own Nintendo Switch Online profile icon. Pick a game, choose a background, a
+          character and a frame from the official NSO icon sets, then download the finished icon as
+          a PNG.
+        </p>
+        <p>This Nintendo Switch icon creator runs in your browser and needs JavaScript enabled.</p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
